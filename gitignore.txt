@@ -3,3 +3,4 @@
 data_outputs/GAM_objects/*
 data/spatial-data-layers/*
 *.eps
+*.Rhistory
