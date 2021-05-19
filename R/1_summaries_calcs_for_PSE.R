@@ -1,8 +1,8 @@
-###### Plots of abundance and productivity at the Conservation Unit level
-###### for the manuscript "Spatiotemporal patterns in salmon..."
+# Code to generate provincial and regional-scale data needed to generate
+# summaries for the Pacific Salmon Explorer
 
 rm(list = ls(all=TRUE)); #Remove all the objects in the memory
-setwd("~/Dropbox (Personal)/Central coast salmon/Manuscripts/Spatiotemporal patterns in salmon abundance and productivity/R_code")
+setwd("~/Dropbox (Salmon Watersheds)/X Drive/1_PROJECTS/Population Methods and Analysis/ProgRegSummaries/data")
 library(ggplot2)
 #library(plyr)
 require(reshape2)
@@ -13,14 +13,12 @@ library(geosphere)
 
 
 #read in CU level data
-abund_file <- read.csv("OUTPUT_TRTC_CU_2017.csv", header = T)
-productivity_file <- read.csv("OUTPUT_AGE_CU_2017.csv", header = T)
+abund_file <- read.csv("May_19_2021_10_4_43_QueryResults.csv", header = T)
 
+d1<- na.omit(abund_file) %>% 
+  group_by(., species, year) %>% 
+  summarise(total = sum(datavalue))
 
-alldates <- c(1960,1970,1980,1990,2000,2010)
-yyy <- c(6.5,16.5,26.5,36.5,46.5,56.5)
-#
-#### 
 
 
 ncc_co <- filter(abund_file, SpeciesId == 'CO')%>%
