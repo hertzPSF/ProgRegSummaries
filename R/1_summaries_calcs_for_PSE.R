@@ -13,11 +13,20 @@ library(geosphere)
 
 
 #read in CU level data
-abund_file <- read.csv("May_19_2021_10_4_43_QueryResults.csv", header = T)
+cc_file <- read.csv("dataset_1part1.Dec072020_CC.csv", header = T)
+fraser_file <- read.csv("dataset_1part1.Jul282020_Fraser.csv", header = T)
+vimi_file <- read.csv("dataset_1part1.Dec082020_VIMI.csv", header = T)
+nass_file <- read.csv("dataset_1part1.Dec092020_Nass.csv", header = T)
+skeena_file <- read.csv("dataset_1part1.Dec092020_Skeena.csv", header = T)
 
-d1<- na.omit(abund_file) %>% 
-  group_by(., species, year) %>% 
-  summarise(total = sum(datavalue))
+# combine files from each region
+cu_dat <- rbind(cc_file,fraser_file,vimi_file,nass_file,skeena_file)
+cu_dat <- select(cu_dat,CUID,Species,Year,Total.run,Region)
+
+
+d1<- na.omit(cu_dat) %>% 
+  group_by(., Species, Region, Year) %>% 
+  summarise(prov_runsize_raw = sum(Total.run))
 
 
 
