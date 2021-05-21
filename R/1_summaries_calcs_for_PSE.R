@@ -37,19 +37,18 @@ cu_dat$Species[cu_dat$Species=="Lake Sockeye"] <- "Sockeye"
 cu_dat <- as_tibble(cu_dat)  # tibble print method is prettier
 
 max_runs <- 
-  cu_dat %>% 
+    cu_dat %>% 
     drop_na(Total.run) %>%  # tidyverse alternative for 
     group_by(CUID, Species) %>% 
     slice(which.max(Total.run)) %>% 
-    ungroup() %>%  # don't forget this step as this can bite you later
     dplyr::rename(max_run = Total.run) %>%
+    ungroup()  # don't forget this step as this can bite you later
 
 total_max_run <- 
   max_runs %>% 
   group_by(Species, Region) %>% 
-  summarise(total_max_run = sum(Total.run)) %>% 
-  ungroup() %>% 
-  mutate(total_max_80 = 0.8 * total_max_run) 
+  summarise(total_max_run = sum(max_run)) %>% 
+  ungroup()
 
 test <- 
   cu_dat %>% 
