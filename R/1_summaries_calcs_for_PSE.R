@@ -42,7 +42,7 @@ max_runs <-
     group_by(CUID, Species) %>% 
     slice(which.max(Total.run)) %>% 
     ungroup() %>%  # don't forget this step as this can bite you later
-    rename(max_run = Total.run)
+    dplyr::rename(max_run = Total.run) %>%
 
 total_max_run <- 
   max_runs %>% 
