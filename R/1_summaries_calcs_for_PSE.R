@@ -46,31 +46,18 @@ write.csv(dat2, "Prov_runsize_1_20210521.csv", row.names=FALSE)
 
 setwd("~/Dropbox (Salmon Watersheds)/X Drive/1_PROJECTS/Population Methods and Analysis/ProgRegSummaries/data")
 
+dat3 <- dat2 %>% group_by(Species,Region) %>%
+  summarize(enddecade_year = max(Year))
 
+dat3 <- dat3 %>% 
+  mutate(startdecade_year = (enddecade_year-9)) #relative run size    
 
+dat4 <- dat2 %>% 
+  group_by(Species,Region) %>%
+  summarise(change_lastdecade = ((mean(tail(prov_runsize_raw,10))-mean(prov_runsize_raw)) / mean(prov_runsize_raw))*100) #relative run size      
 
+dat5 <- left_join(dat3, dat4, by=c("Region","Species"))
 
-###old code
-ncc_co <- filter(abund_file, SpeciesId == 'CO')%>%
-  select('Year', 'Total.Run')%>%
-  na.omit()
+setwd("~/Dropbox (Salmon Watersheds)/X Drive/1_PROJECTS/Population Methods and Analysis/ProgRegSummaries/output")
+write.csv(dat2, "Prov_runsize_2_20210521.csv", row.names=FALSE)
 
-d1<- group_by(ncc_co, Year) %>% 
-  summarise(total = sum(Total.Run))
-
-
-get_cor <- function(x, y, use = 'complete.obs') {
-  cor_val <- cor(x, y, use)
-  return(data_frame(cor_val = cor_val))
-}
-
-chum_r2 <-
-  expanded_df%>%
-  group_by(CU_Name.x, CU_Name.y) %>%
-  do(get_cor(.$Total.Run.x, .$Total.Run.y, use = 'complete.obs')) %>%
-  filter(CU_Name.x != CU_Name.y)%>%
-  ungroup()%>%
-  rowwise()%>%
-  mutate(min_pop = min(c(CU_Name.x, CU_Name.y)), 
-         max_pop = max(c(CU_Name.x, CU_Name.y)))%>%
-  distinct(min_pop, max_pop, .keep_all = TRUE)
