@@ -3,10 +3,10 @@
 
 rm(list = ls(all=TRUE)); #Remove all the objects in the memory
 setwd("~/Dropbox (Salmon Watersheds)/X Drive/1_PROJECTS/Population Methods and Analysis/ProgRegSummaries/data")
-library(ggplot2)
+# Delete plyr and reshape3 if not loading them doesn't break your code lol, load as necessary
 #library(plyr)
-require(reshape2)
-library(dplyr)
+#require(reshape2)  # see if you even need this anymore
+library(tidyverse)  # good default load capturing ggplot2 and dplyr
 library(broom)
 library(geosphere)
 
