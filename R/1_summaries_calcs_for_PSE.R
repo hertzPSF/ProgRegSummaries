@@ -50,13 +50,15 @@ total_max_run <-
   summarise(total_max_run = sum(max_run)) %>% 
   ungroup()
 
+
 test <- 
 cu_dat %>% 
-  drop_na(Total.run) %>%
+  drop_na(Total.run) %>% 
+  left_join(., max_runs %>% select(-Year)) %>% 
   left_join(., total_max_run) %>% 
   group_by(Year, Species, Region) %>% 
-  arrange(Year, Species, Region, -Total.run) %>% 
-  mutate(c1 = cumsum(Total.run)) %>%
+  arrange(Year, Species, Region, -max_run) %>% 
+  mutate(c1 = cumsum(max_run)) %>%
   mutate(percent = c1 / total_max_run) %>%
   mutate(pop1 = lag(percent), pop_cur = percent) %>% 
   # Identify if there is a CU that hits the 80% cutoff
@@ -65,22 +67,14 @@ cu_dat %>%
   # Reorder the columns to make checking easier
   select(CUID, Region, Species, Year, Total.run, c1, total_max_run, percent, pop1, pop_cur, cutoff)
 
-test2 <- filter(test, Year > 1980)
-
 years_min80 <- 
   test %>% 
     slice(which(cutoff == TRUE)) %>% 
     select(Species, Year, Region)
 
+# Can lop off the c1:cutoff if you want
+output <- left_join(years_min80, test)
 
-
-test <- 
-  cu_dat %>% 
-    drop_na(Total.run) %>%
-    group_by(Species, Region, Year) %>% 
-    summarise(raw_runsize = sum(Total.run)) %>% 
-    left_join(., total_max_run) %>% 
-    filter(raw_runsize >= total_max_80)
 # ------------------------------------------------------------------------------
   
 #create provincial run size summary file 1, raw and relative run size by species, region, year
