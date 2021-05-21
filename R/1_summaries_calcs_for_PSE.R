@@ -31,6 +31,35 @@ unique(cu_dat$Species)
 cu_dat$Species[cu_dat$Species=="River Sockeye"] <- "Sockeye"
 cu_dat$Species[cu_dat$Species=="Lake Sockeye"] <- "Sockeye"
 
+
+# Attempt at selecting 80% runs?
+# ------------------------------------------------------------------------------
+cu_dat <- as_tibble(cu_dat)  # tibble print method is prettier
+
+max_runs <- 
+  cu_dat %>% 
+    drop_na(Total.run) %>%  # tidyverse alternative for 
+    group_by(CUID, Species) %>% 
+    slice(which.max(Total.run)) %>% 
+    ungroup() %>%  # don't forget this step as this can bite you later
+    rename(max_run = Total.run)
+
+total_max_run <- 
+  max_runs %>% 
+  group_by(Species, Region) %>% 
+  summarise(total_max_run = sum(Total.run)) %>% 
+  ungroup() %>% 
+  mutate(total_max_80 = 0.8 * total_max_run) 
+
+test <- 
+  cu_dat %>% 
+    drop_na(Total.run) %>%
+    group_by(Species, Region, Year) %>% 
+    summarise(raw_runsize = sum(Total.run)) %>% 
+    left_join(., total_max_run) %>% 
+    filter(raw_runsize >= total_max_80)
+# ------------------------------------------------------------------------------
+  
 #create provincial run size summary file 1, raw and relative run size by species, region, year
 
 d1<- na.omit(cu_dat) %>% 
