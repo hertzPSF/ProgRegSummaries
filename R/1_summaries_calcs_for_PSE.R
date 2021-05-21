@@ -23,10 +23,31 @@ skeena_file <- read.csv("dataset_1part1.Dec092020_Skeena.csv", header = T)
 cu_dat <- rbind(cc_file,fraser_file,vimi_file,nass_file,skeena_file)
 cu_dat <- select(cu_dat,CUID,Species,Year,Total.run,Region)
 
+#check species names
+unique(cu_dat$Species)
+cu_dat$Species[cu_dat$Species=="River Sockeye"] <- "Sockeye"
+cu_dat$Species[cu_dat$Species=="Lake Sockeye"] <- "Sockeye"
+
+#create provincial run size summary file 1, raw and relative run size by species, region, year
 
 d1<- na.omit(cu_dat) %>% 
   group_by(., Species, Region, Year) %>% 
-  summarise(prov_runsize_raw = sum(Total.run))
+  summarise(prov_runsize_raw = sum(Total.run)) ## raw run size
+
+
+dat2 <- d1 %>% 
+  group_by(Species,Region) %>%
+  mutate(prov_runsize_relative = (prov_runsize_raw / max(prov_runsize_raw))*100) #relative run size      
+
+setwd("~/Dropbox (Salmon Watersheds)/X Drive/1_PROJECTS/Population Methods and Analysis/ProgRegSummaries/output")
+write.csv(dat2, "Prov_runsize_1_20210521.csv", row.names=FALSE)
+
+#create provincial run size summary file 2, start year, end year, percent change
+
+setwd("~/Dropbox (Salmon Watersheds)/X Drive/1_PROJECTS/Population Methods and Analysis/ProgRegSummaries/data")
+
+
+
 
 
 ###old code
