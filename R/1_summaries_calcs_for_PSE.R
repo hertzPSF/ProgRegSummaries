@@ -51,6 +51,30 @@ total_max_run <-
   ungroup()
 
 test <- 
+cu_dat %>% 
+  drop_na(Total.run) %>%
+  left_join(., total_max_run) %>% 
+  group_by(Year, Species, Region) %>% 
+  arrange(Year, Species, Region, -Total.run) %>% 
+  mutate(c1 = cumsum(Total.run)) %>%
+  mutate(percent = c1 / total_max_run) %>%
+  mutate(pop1 = lag(percent), pop_cur = percent) %>% 
+  # Identify if there is a CU that hits the 80% cutoff
+  mutate(cutoff = ifelse(pop_cur >= 0.8 & pop1 < 0.8, TRUE, FALSE)) %>% 
+  ungroup() %>%
+  # Reorder the columns to make checking easier
+  select(CUID, Region, Species, Year, Total.run, c1, total_max_run, percent, pop1, pop_cur, cutoff)
+
+test2 <- filter(test, Year > 1980)
+
+years_min80 <- 
+  test %>% 
+    slice(which(cutoff == TRUE)) %>% 
+    select(Species, Year, Region)
+
+
+
+test <- 
   cu_dat %>% 
     drop_na(Total.run) %>%
     group_by(Species, Region, Year) %>% 
