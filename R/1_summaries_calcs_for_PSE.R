@@ -6,9 +6,12 @@ rm(list = ls(all=TRUE)); #Remove all the objects in the memory
 #here::set_here()
 #setwd(here::here())
 setwd("~/Dropbox (Salmon Watersheds)/X Drive/1_PROJECTS/Population Methods and Analysis/ProgRegSummaries/data")
-library(tidyverse)  # good default load capturing ggplot2 and dplyr
+library(tidyverse)
 library(broom)
 library(geosphere)
+
+
+#### 1 Read in and manipulated data
 
 #read in CU level data
 cc_file <- read.csv("dataset_1part1.Dec072020_CC.csv", header = T)
@@ -27,7 +30,8 @@ cu_dat$Species[cu_dat$Species=="River Sockeye"] <- "Sockeye"
 cu_dat$Species[cu_dat$Species=="Lake Sockeye"] <- "Sockeye"
 
 
-# Selecting only the years that have CUs that comprise 80% of the maximum historical run size
+#### 2 Generate files needed for Provincial summaries
+#Select only the years that have CUs that comprise 80% of the maximum historical run size
 # ------------------------------------------------------------------------------
 cu_dat <- as_tibble(cu_dat) 
 
@@ -78,7 +82,7 @@ d1<- na.omit(cu_dat) %>%
   summarise(prov_runsize_raw = sum(Total.run)) 
 
 ## create column for relative run size
-dat2 <- d1 %>% 
+d2 <- d1 %>% 
   group_by(Species,Region) %>%
   mutate(prov_runsize_relative = (prov_runsize_raw / max(prov_runsize_raw))*100) #relative run size      
 
@@ -105,5 +109,29 @@ dat4 <- dat2 %>%
 dat5 <- left_join(dat3, dat4, by=c("Region","Species"))
 
 setwd("~/Dropbox (Salmon Watersheds)/X Drive/1_PROJECTS/Population Methods and Analysis/ProgRegSummaries/output")
-write.csv(dat2, "Prov_runsize_2_20210521.csv", row.names=FALSE)
+write.csv(dat5, "Prov_runsize_2_20210521.csv", row.names=FALSE)
 
+#### 3 Generate files needed for regional summaries
+#calculate average of run size for each region and species by year
+
+## create column for raw run size
+dat6<- na.omit(cu_dat) %>% 
+  group_by(., Species, Region, Year) %>% 
+  summarise(reg_runsize_raw = mean(Total.run)) 
+
+## create column for relative run size
+cu_dat2 <- na.omit(cu_dat) %>% 
+  group_by(CUID) %>%
+  mutate(runsize_relative = (Total.run / max(Total.run))*100)
+
+dat7<- na.omit(cu_dat2) %>% 
+  group_by(., Species, Region, Year) %>% 
+  summarise(reg_runsize_relative = mean(runsize_relative)) 
+
+dat8 <- left_join(dat6, dat7, by=c("Region","Species","Year"))
+
+dat8 <- inner_join(dat8,years_min80) 
+
+write.csv(dat8, "Reg_runsize_1_20210525.csv", row.names=FALSE)
+
+###create regional run size summary file 2, start year, end year, percent change
