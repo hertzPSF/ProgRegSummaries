@@ -87,9 +87,13 @@ d2 <- d1 %>%
   mutate(prov_runsize_relative = (prov_runsize_raw / max(prov_runsize_raw))*100) #relative run size      
 
 ## join files so that only years with greater than 80% of historical CUs are shown
-dat2 <- inner_join(dat2,years_min80)
+dat2 <- inner_join(d2,years_min80)
 
 setwd("~/Dropbox (Salmon Watersheds)/X Drive/1_PROJECTS/Population Methods and Analysis/ProgRegSummaries/output")
+
+fraser_dat <- read.csv("Fraser_total_runsize.csv", header = T) # add in aggregated fraser data
+dat2 <- rbind(dat2, fraser_dat)
+
 write.csv(dat2, "Prov_runsize_1_20210521.csv", row.names=FALSE)
 
 #create provincial run size summary file 2, start year, end year, percent change
@@ -132,6 +136,8 @@ dat8 <- left_join(dat6, dat7, by=c("Region","Species","Year"))
 
 dat8 <- inner_join(dat8,years_min80) 
 
+fraser_dat_reg <- read.csv("Fraser_total_runsize_reg.csv", header = T) # add in aggregated fraser data
+dat8 <- rbind(dat8, fraser_dat_reg)
+
 write.csv(dat8, "Reg_runsize_1_20210525.csv", row.names=FALSE)
 
-###create regional run size summary file 2, start year, end year, percent change
