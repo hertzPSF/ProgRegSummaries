@@ -65,6 +65,8 @@ cu_dat %>%
   # Reorder the columns to make checking easier
   select(CUID, Region, Species, Year, Total.run, c1, total_max_run, percent, pop1, pop_cur, cutoff)
 
+test$cutoff[is.na(test$cutoff)] <- TRUE
+
 years_min80 <- 
   test %>% 
     slice(which(cutoff == TRUE)) %>% 
