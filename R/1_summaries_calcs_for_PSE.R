@@ -141,9 +141,6 @@ dat8 <- left_join(dat6, dat7, by=c("Region","Species","Year"))
 
 dat8 <- inner_join(dat8,years_min80) 
 
-fraser_dat_reg <- read.csv("Fraser_total_runsize_reg.csv", header = T) # add in aggregated fraser data
-dat8 <- rbind(dat8, fraser_dat_reg)
-
 dat8$Species[dat8$Species=="Pink (Odd)"] <- "Pink"
 dat8$Species[dat8$Species=="Pink (Even)"] <- "Pink"
 
