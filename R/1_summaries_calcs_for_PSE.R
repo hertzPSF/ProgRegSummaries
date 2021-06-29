@@ -112,8 +112,21 @@ dat3 <- dat3 %>%
   mutate(startdecade_year = (enddecade_year-9)) #relative run size    
 
 dat4 <- dat2 %>% 
-  group_by(Species,Region) %>%
+  group_by(Species, Region) %>%
   summarise(change_lastdecade = ((mean(tail(prov_runsize_raw,10))-mean(prov_runsize_raw)) / mean(prov_runsize_raw))*100) #relative run size      
+
+dat2 %>% 
+  mutate(time_chunk = ifelse(Year <= 2010, '1960 - 2010', '2011 - 2020')) %>%
+  # Alternative way of doing this, extra useful if you have more than 2 cases
+  # This is also more explicit in case group making isn't as straightforward as 
+  # this case
+  #case_when(time_chunk = case_when((Year >= 1960 & Year <= 2010) ~ '1960 - 2010', 
+  #                                 (Year >= 2011 & Year <= 2020) ~ '2011 - 2020')) %>% 
+  group_by(Species, Region, time_chunk) %>%
+  summarise(mean_runsize = mean(prov_runsize_raw)) %>% 
+  pivot_wider(id_cols = c(Species, Region), names_from = time_chunk, values_from = mean_runsize) %>% 
+  mutate(change_lastdecade = (`2011 - 2020` - `1960 - 2010`) / `1960 - 2010`)
+
 
 dat5 <- left_join(dat3, dat4, by=c("Region","Species"))
 
