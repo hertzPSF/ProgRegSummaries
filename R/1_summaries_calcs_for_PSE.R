@@ -1,17 +1,15 @@
 # Code to generate provincial and regional-scale data needed to generate
 # summaries for the Pacific Salmon Explorer
+# The code was originally written by Eric Hertz at the Pacific Salmon Foundation ehertz@psf.ca 
 
 rm(list = ls(all=TRUE)); #Remove all the objects in the memory
-# One time command to set the ProgRegSummaries as the highest level directory
-#here::set_here()
-#setwd(here::here())
 setwd("~/Dropbox (Salmon Watersheds)/X Drive/1_PROJECTS/Population Methods and Analysis/ProgRegSummaries")
 library(tidyverse)
 library(broom)
 library(geosphere)
 
 
-#### 1 Read in and manipulated data
+#### 1 Read in and manipulateddata
 
 #read in CU level data
 cc_file <- read.csv("data/dataset_1part1.Dec072020_CC.csv", header = T)
@@ -103,7 +101,6 @@ write.csv(dat2, "output/Prov_runsize_1_20210521.csv", row.names=FALSE)
 
 #create provincial run size summary file 2, start year, end year, percent change
 
-#setwd("~/Dropbox (Salmon Watersheds)/X Drive/1_PROJECTS/Population Methods and Analysis/ProgRegSummaries/data")
 
 dat3 <- dat2 %>% group_by(Species,Region) %>%
   summarize(enddecade_year = max(Year))
@@ -120,11 +117,8 @@ start_end_years <-
   group_by(Species, Region) %>% 
   summarise(start_year = min(Year), end_year = max(Year), decade_start = max(Year) - 10)
 
-dat2 %>% 
+dat4 <- dat2 %>% 
   left_join(., start_end_years) %>%
-  # Alternative way of doing this, extra useful if you have more than 2 cases
-  # This is also more explicit in case group making isn't as straightforward as 
-  # this case
   mutate(time_chunk = case_when((Year >= start_year & Year < decade_start) ~ paste(start_year, decade_start, sep = ' - '), 
                                 (Year >= decade_start) ~ paste(decade_start, end_year, sep = ' - '))) %>% 
   # to make calculating % change simpler, since year ranges are different for species - region combos
@@ -133,13 +127,13 @@ dat2 %>%
   group_by(Species, Region, time_chunk, time_chunk_id) %>%
   summarise(mean_runsize = mean(prov_runsize_raw)) %>% 
   pivot_wider(id_cols = c(Species, Region), names_from = time_chunk_id, values_from = mean_runsize) %>% 
-  mutate(change_lastdecade = (`recent decade` - historical) / historical)
-
+  mutate(change_lastdecade = ((`recent decade` - historical) / historical)*100)
 
 dat5 <- left_join(dat3, dat4, by=c("Region","Species"))
 
-#setwd("~/Dropbox (Salmon Watersheds)/X Drive/1_PROJECTS/Population Methods and Analysis/ProgRegSummaries/output")
-write.csv(dat5, "output/Prov_runsize_2_20210521.csv", row.names=FALSE)
+dat5 <- select(dat5, Species, Region, enddecade_year, startdecade_year, change_lastdecade)
+
+write.csv(dat5, "output/Prov_runsize_2_20210629.csv", row.names=FALSE)
 
 #### 3 Generate files needed for regional summaries
 #calculate average of run size for each region and species by year
