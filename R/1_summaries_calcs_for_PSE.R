@@ -14,12 +14,14 @@ library(geosphere)
 #read in CU level data
 cc_file <- read.csv("data/dataset_1part1.Dec072020_CC.csv", header = T)
 fraser_file <- read.csv("data/dataset_1part1.Jul282020_Fraser.csv", header = T)
-vimi_file <- read.csv("data/dataset_1part1.Dec082020_VIMI.csv", header = T)
+vimi_file <- read.csv("data/dataset_1part1.Jul282021_VIMI.csv", header = T)
 nass_file <- read.csv("data/dataset_1part1.Dec092020_Nass.csv", header = T)
 skeena_file <- read.csv("data/dataset_1part1.Dec092020_Skeena.csv", header = T)
+hg_file <- read.csv("data/dataset_1part1.Aug242020_HG.csv", header = T)
+columbia_file <- read.csv("data/dataset_1part1.NOV272019_Columbia.csv", header = T)
 
 # combine files from each region
-cu_dat <- rbind(cc_file,fraser_file,vimi_file,nass_file,skeena_file)
+cu_dat <- rbind(cc_file,fraser_file,vimi_file,nass_file,skeena_file,hg_file,columbia_file)
 cu_dat <- select(cu_dat,CUID,Species,Year,Total.run,Region)
 
 #check species names
@@ -90,12 +92,14 @@ d2 <- d1 %>%
 dat2 <- inner_join(d2,years_min80)
 
 #setwd("~/Dropbox (Salmon Watersheds)/X Drive/1_PROJECTS/Population Methods and Analysis/ProgRegSummaries/output")
-
+dat2 <- dat2 %>%
+  filter(!((Species == 'Sockeye' & Region == 'Fraser')))
 fraser_dat <- read.csv("output/Fraser_total_runsize.csv", header = T) # add in aggregated fraser data
+fraser_dat <- as_tibble(fraser_dat) 
 dat2 <- rbind(dat2, fraser_dat)
 
-dat2$Species[dat2$Species=="Pink (Odd)"] <- "Pink"
-dat2$Species[dat2$Species=="Pink (Even)"] <- "Pink"
+#dat2$Species[dat2$Species=="Pink (Odd)"] <- "Pink"
+#dat2$Species[dat2$Species=="Pink (Even)"] <- "Pink"
 
 write.csv(dat2, "output/Prov_runsize_1_20210521.csv", row.names=FALSE)
 
@@ -156,8 +160,8 @@ dat8 <- left_join(dat6, dat7, by=c("Region","Species","Year"))
 
 dat8 <- inner_join(dat8,years_min80) 
 
-dat8$Species[dat8$Species=="Pink (Odd)"] <- "Pink"
-dat8$Species[dat8$Species=="Pink (Even)"] <- "Pink"
+#dat8$Species[dat8$Species=="Pink (Odd)"] <- "Pink"
+#dat8$Species[dat8$Species=="Pink (Even)"] <- "Pink"
 
 write.csv(dat8, "output/Reg_runsize_1_20210525.csv", row.names=FALSE)
 
