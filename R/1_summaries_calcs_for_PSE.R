@@ -17,7 +17,7 @@ fraser_file <- read.csv("data/dataset_1part1.Jul282020_Fraser.csv", header = T)
 vimi_file <- read.csv("data/dataset_1part1.Jul282021_VIMI.csv", header = T)
 nass_file <- read.csv("data/dataset_1part1.Dec092020_Nass.csv", header = T)
 skeena_file <- read.csv("data/dataset_1part1.Dec092020_Skeena.csv", header = T)
-hg_file <- read.csv("data/dataset_1part1.Sep272021_HG.csv", header = T)
+hg_file <- read.csv("data/dataset_1part1.Oct252021_HG.csv", header = T)
 columbia_file <- read.csv("data/dataset_1part1.NOV272019_Columbia.csv", header = T)
 
 # combine files from each region
@@ -101,7 +101,7 @@ dat2 <- rbind(dat2, fraser_dat)
 #dat2$Species[dat2$Species=="Pink (Odd)"] <- "Pink"
 #dat2$Species[dat2$Species=="Pink (Even)"] <- "Pink"
 
-write.csv(dat2, "output/Prov_runsize_1_20211006.csv", row.names=FALSE)
+write.csv(dat2, "output/Prov_runsize_1_20211028.csv", row.names=FALSE)
 
 #create provincial run size summary file 2, start year, end year, percent change
 
@@ -137,7 +137,7 @@ dat5 <- left_join(dat3, dat4, by=c("Region","Species"))
 
 dat5 <- select(dat5, Species, Region, enddecade_year, startdecade_year, change_lastdecade)
 
-write.csv(dat5, "output/Prov_runsize_2_20211006.csv", row.names=FALSE)
+write.csv(dat5, "output/Prov_runsize_2_20211028.csv", row.names=FALSE)
 
 #### 3 Generate files needed for regional summaries
 #calculate average of run size for each region and species by year
@@ -163,5 +163,5 @@ dat8 <- inner_join(dat8,years_min80)
 #dat8$Species[dat8$Species=="Pink (Odd)"] <- "Pink"
 #dat8$Species[dat8$Species=="Pink (Even)"] <- "Pink"
 
-write.csv(dat8, "output/Reg_runsize_1_20211006.csv", row.names=FALSE)
+write.csv(dat8, "output/Reg_runsize_1_20211028.csv", row.names=FALSE)
 
