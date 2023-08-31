@@ -12,12 +12,12 @@ library(geosphere)
 #### 1 Read in and manipulateddata
 
 #read in CU level data
-cc_file <- read.csv("data/dataset_1part1.Mar032023_CC.csv", header = T)
-fraser_file <- read.csv("data/dataset_1part1.Jul282020_Fraser.csv", header = T)
+cc_file <- read.csv("data/dataset_1part1.Aug182023_CC.csv", header = T)
+fraser_file <- read.csv("data/dataset_1part1.Aug302023_Fraser.csv", header = T)
 vimi_file <- read.csv("data/dataset_1part1.Jul282021_VIMI.csv", header = T)
 nass_file <- read.csv("data/dataset_1part1.Dec092020_Nass.csv", header = T)
 skeena_file <- read.csv("data/dataset_1part1.May262022_Skeena.csv", header = T)
-hg_file <- read.csv("data/dataset_1part1.Oct252021_HG.csv", header = T)
+hg_file <- read.csv("data/dataset_1part1.Aug182023_HG.csv", header = T)
 columbia_file <- read.csv("data/dataset_1part1.NOV272019_Columbia.csv", header = T)
 yukon_file <- read.csv("data/dataset_1part1.Oct172022_Yukon.csv", header = T)
 
